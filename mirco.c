@@ -3,9 +3,13 @@
 #include <string.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <sys/wait.h>
 
 #define ERROR	-1
 #define SUCCESS	0
+
+#define STDIN	0
+#define STDOUT	1
 
 #define PIPE_STR	"|"
 #define SEMI_STR	";"
@@ -30,6 +34,37 @@ typedef	struct s_cmd
 	t_cmd		*prev;
 }	t_cmd;
 
+#define CD1	"error: cd: bad arguments\n"
+#define CD2	"error: cd: cannot change directory to "
+#define EXECVE	"error: cannot execute "
+
+
+int	ft_strlen(char *s)
+{
+	int	i = 0;
+	while (s[i])
+		++i;
+	return (i);
+}
+
+void	err_execve(char *s)
+{
+	write(STDERR_FILENO, EXECVE, ft_strlen(EXECVE));
+	write(STDERR_FILENO, s, ft_strlen(s));
+	write(STDERR_FILENO, "\n", 1);
+}
+void	exit_cd1(void)
+{
+	write(STDERR_FILENO, CD1, ft_strlen(CD1));
+}
+
+void	exit_cd2(char *s)
+{
+	write(STDERR_FILENO, CD2, ft_strlen(CD2));
+	write(STDERR_FILENO, s, ft_strlen(s));
+	write(STDERR_FILENO, "\n", 1);
+}
+
 void	ft_bzro(void *m, int size)
 {
 	char *mem;
@@ -52,14 +87,6 @@ void	*ft_calloc(int num, int size)
 		return (NULL);
 	ft_bzro(ret, num * size);
 	return (ret);
-}
-
-int	ft_strlen(char *s)
-{
-	int	i = 0;
-	while (s[i])
-		++i;
-	return (i);
 }
 
 char *ft_strdup(char *src)
@@ -226,14 +253,72 @@ void	print_all_cmd(t_cmd *l)
 	}
 }
 
+void child_logic(t_cmd *c)
+{
+	if (PIPE == c->type)
+	{
+		if (ERROR == dup2(c->fd[STDOUT], STDOUT_FILENO))
+			exit(ERROR);
+	}
+	if (c->prev && PIPE == c->prev->type)
+	{
+		if (ERROR == dup2(c->prev->fd[STDIN], STDIN_FILENO))
+			exit(ERROR);
+	}
+	if (ERROR == execve(c->av[0], c->av, c->env))
+		exit(ERROR);
+	exit(EXIT_SUCCESS);
+}
+
+void parent_logic(t_cmd *c, pid_t pid)
+{
+	int	stt;
+
+	waitpid(pid, &stt, 0);
+	if (PIPE == c->type || (c->prev && PIPE == c->prev->type))
+	{
+		close(c->fd[STDOUT]);
+		if (!c->next || BREAK == c->type)
+		{
+			close(c->fd[STDIN]);
+		}
+	}
+	if (c->prev && c->prev->type == PIPE)
+		close(c->prev->fd[STDIN]);
+}
+
 void	exec_cmd(t_cmd *c)
 {
 	pid_t	pid;
 
 	if (PIPE == c->type || (c->prev && PIPE == c->prev->type))
 	{
+		if (pipe(c->fd) == ERROR)
+			exit(ERROR);
 	}
 	pid = fork();
+	if (pid < 0)
+		exit(ERROR);
+	if (0 == pid)
+		child_logic(c);
+	else
+		parent_logic(c, pid);
+}
+
+void	exec_cd(t_cmd *c)
+{
+	int stt;
+
+	if (c->size < 2)
+	{
+		exit_cd1();
+		return ;
+	}
+	stt = chdir(c->av[0]);
+	if (ERROR == stt)
+	{
+		exit_cd2(c->av[0]);
+	}
 }
 
 void	exec_all_cmds(t_cmd	*c)
@@ -255,7 +340,8 @@ int	main(int ac, char **av, char **env)
 
 	(void)ac;
 	stt = create_cmd_list(&list, av, env);
-	if (SUCCESS == stt)
-		print_all_cmd(list);
+	// if (SUCCESS == stt)
+	// 	print_all_cmd(list);
+	exec_all_cmds(list);
 	return (SUCCESS);
 }

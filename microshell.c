@@ -187,9 +187,15 @@ void exec_cmd(t_base *temp, char **env)
 		waitpid(pid, &status, 0);
 		if (pipe_open)
 		{
+		printf("BB\n");
+
 			close(temp->fd[STDOUT]);
 			if (!temp->next || temp->type == TYPE_BREAK)
+			{
+			printf("AA\n");
+
 				close(temp->fd[STDIN]);
+			}
 		}
 		if (temp->prev && temp->prev->type == TYPE_PIPE)
 			close(temp->prev->fd[STDIN]);
