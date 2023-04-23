@@ -5,7 +5,11 @@
 <h1>My first PHP page</h1>
 
 <?php
-echo "Hello World!";
+$colors = getenv();
+
+foreach ($colors as $value) {
+  echo "$value <br>";
+}
 ?>
 
 </body>
