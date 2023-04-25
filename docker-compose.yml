@@ -6,13 +6,21 @@ services:
     build:
       context: .
       dockerfile: ./nginx/nginx.dockerfile
-      args:
-        ENABLED_MODULES: ndk lua
     restart: always
     ports:
+      - 8080:8080
       - 80:80
     volumes:
       - ./php/src:/var/www/html:delegated
+
+  exporter:
+    container_name: exporter
+    build:
+      context: .
+      dockerfile: ./exporter/exporter.dockerfile
+    ports:
+      - 9113:9113
+    command: -nginx.scrape-uri=http://nginx:8080/stub_status
 
   php:
     container_name: php
