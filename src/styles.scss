@@ -1,4 +1,9 @@
-$bg-color: rgb(20, 20, 20);
+:root {
+    --bg-color: rgb(20, 20, 20);
+    --card-bg-color: rgb(23, 23, 23);
+    --card-border-color: rgba(255, 255, 255, 0.1);
+    --card-border-radius: 10px;
+}
 
 body {
     margin: 0;
@@ -9,23 +14,5 @@ body {
     align-items: center;
     width: 100vw;
     height: 100vh;
-    background-color: $bg-color;
-}
-
-#cards {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    max-width: 1000px;
-    width: calc(100% - 20px);
-
-}
-
-.card {
-    background-color: rgba(255, 255, 255, 0.02);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    cursor: pointer;
-    height: 260px;
-    width: 300px;
-
+    background-color: var(--bg-color);
 }
