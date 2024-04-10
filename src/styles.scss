@@ -1,9 +1,4 @@
-:root {
-    --bg-color: rgb(20, 20, 20);
-    --card-bg-color: rgb(23, 23, 23);
-    --card-border-color: rgba(255, 255, 255, 0.1);
-    --card-border-radius: 10px;
-}
+:root {}
 
 body {
     margin: 0;
@@ -14,5 +9,5 @@ body {
     align-items: center;
     width: 100vw;
     height: 100vh;
-    background-color: var(--bg-color);
+    background-color: rgba(0, 0, 0, 0.92);
 }

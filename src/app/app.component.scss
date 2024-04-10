@@ -1,61 +1,77 @@
-#cards {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    max-width: 1000px;
-    width: calc(100% - 20px);
-
+.into-pic-con {
+    // width: 240px;
+    // height: 200px;
 }
 
-#cards>.card {
-    background-color: var(--card-border-color);
-    border-radius: var(--card-border-radius);
-    cursor: pointer;
-    height: 260px;
-    width: 300px;
-    position: relative;
-    z-index: 0;
+.into-pic-con>img {
+    // width: 100%;
+    // height: 100%;
+    object-fit: cover;
+}
+
+// Main Picture
+#main-pic {
+    animation-duration: 3s;
+    // animation-name: main-slide;
+    animation-direction: alternate;
+    animation-fill-mode: forwards;
+}
+
+@keyframes main-slide {
+    from {
+        transform: translateX(0%);
+    }
+
+    to {
+        transform: translateX(100%);
+    }
+}
+
+#center-con {
     display: flex;
-    justify-content: center;
+    height: 100vh;
+    width: 25vw;
     align-items: center;
+    justify-content: center;
 }
 
-#cards:hover>.card::after {
-    opacity: 1;
-}
-
-.card:hover::before {
-    opacity: 1;
-}
-
-.card::before,
-.card::after {
-    opacity: 0;
-    transition: opacity 500ms;
-    background: radial-gradient(800px circle at var(--mouse-x) var(--mouse-y),
-            rgba(255, 255, 255, 0.06),
-            transparent 40%);
-    content: "";
-    height: 100%;
-    left: 0;
-    top: 0;
+#center-top-pic {
     position: absolute;
-    width: 100%;
-    z-index: 3;
-    border-radius: inherit;
+    bottom: -260px;
 }
 
-.card::after {
-    background: radial-gradient(400px circle at var(--mouse-x) var(--mouse-y),
-            rgba(255, 255, 255, 0.3),
-            transparent 40%);
-    z-index: 1;
+// Center Top Picture
+.go-up {
+    animation: 1500ms ease-in-out go-up1 forwards,
+        1s ease-in-out 1200ms go-up2 forwards,
+        1s ease-in 1700ms go-up3 forwards;
 }
 
-.card>.card-content {
-    background-color: var(--card-bg-color);
-    border-radius: inherit;
-    position: absolute;
-    inset: 2px;
-    z-index: 2;
+.go-big {
+    animation: 2s ease-in 1700ms go-big forwards,
+}
+
+
+@keyframes go-up1 {
+    to {
+        transform: translateY(-260px);
+    }
+}
+
+@keyframes go-up2 {
+    to {
+        transform: translateY(-750px);
+    }
+}
+
+@keyframes go-up3 {
+    to {
+        transform: translateY(-1200px);
+    }
+}
+
+@keyframes go-big {
+    to {
+        transform: scale(1.5)
+    }
 }
