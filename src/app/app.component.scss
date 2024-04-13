@@ -1,77 +1,71 @@
-.into-pic-con {
-    // width: 240px;
-    // height: 200px;
+// Center
+#center-con {
+    background-color: lightblue;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    width: 100vw;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
 }
 
-.into-pic-con>img {
-    // width: 100%;
-    // height: 100%;
-    object-fit: cover;
-}
+.pic-con {
+    width: 100%;
+    height: 100%;
 
-// Main Picture
-#main-pic {
-    animation-duration: 3s;
-    // animation-name: main-slide;
-    animation-direction: alternate;
+    animation-duration: 5s;
+    animation-timing-function: cubic-bezier(.83, 0, .08, .52);
+    animation-name: go-up;
     animation-fill-mode: forwards;
 }
 
-@keyframes main-slide {
-    from {
-        transform: translateX(0%);
-    }
-
-    to {
-        transform: translateX(100%);
-    }
-}
-
-#center-con {
-    display: flex;
-    height: 100vh;
-    width: 25vw;
-    align-items: center;
-    justify-content: center;
-}
-
-#center-top-pic {
-    position: absolute;
-    bottom: -260px;
-}
-
-// Center Top Picture
-.go-up {
-    animation: 1500ms ease-in-out go-up1 forwards,
-        1s ease-in-out 1200ms go-up2 forwards,
-        1s ease-in 1700ms go-up3 forwards;
+.go-big>img {
+    width: 100%;
+    height: 100%;
 }
 
 .go-big {
-    animation: 2s ease-in 1700ms go-big forwards,
-}
-
-
-@keyframes go-up1 {
-    to {
-        transform: translateY(-260px);
-    }
-}
-
-@keyframes go-up2 {
-    to {
-        transform: translateY(-750px);
-    }
-}
-
-@keyframes go-up3 {
-    to {
-        transform: translateY(-1200px);
-    }
+    width: 100%;
+    height: 100%;
+    animation-duration: 10s;
+    animation-timing-function: cubic-bezier(.83, 0, .08, .52);
+    animation-name: go-big;
+    animation-fill-mode: forwards;
 }
 
 @keyframes go-big {
+    from {
+        transform: scale(0.2);
+    }
+
     to {
-        transform: scale(1.5)
+        transform: scale(1);
+    }
+}
+
+@keyframes go-up {
+    from {
+        transform: translateY(300vh);
+    }
+
+    to {
+        transform: translateY(0);
+    }
+}
+
+
+@for $i from 1 through 5 {
+    .go-big:nth-child(#{$i}) {
+        animation-delay: calc($i * 500ms);
+        // animation-duration: 3s;
+        // animation-timing-function: cubic-bezier(.83, 0, .08, .52);
+        // animation-name: go-up;
+        // animation-fill-mode: forwards;
+
+        // animation-delay: 3s;
+        // animation: 3s cubic-bezier(.83, 0, .08, .52) go-up forwards;
+
+        // bottom: -260px * $i
     }
 }
