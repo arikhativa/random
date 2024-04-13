@@ -7,31 +7,27 @@
     width: 100vw;
     align-items: center;
     justify-content: center;
-    overflow: hidden;
-}
+    overflow: visible;
 
-.pic-con {
-    width: 100%;
-    height: 100%;
-
-    animation-duration: 5s;
-    animation-timing-function: cubic-bezier(.83, 0, .08, .52);
-    animation-name: go-up;
-    animation-fill-mode: forwards;
-}
-
-.go-big>img {
-    width: 100%;
-    height: 100%;
-}
-
-.go-big {
-    width: 100%;
-    height: 100%;
+    // animation-delay: 5s;
     animation-duration: 10s;
     animation-timing-function: cubic-bezier(.83, 0, .08, .52);
     animation-name: go-big;
     animation-fill-mode: forwards;
+}
+
+.pic-con {
+    animation-duration: 5s;
+    animation-timing-function: cubic-bezier(.83, 0, .08, .52);
+    animation-name: go-up;
+    animation-fill-mode: forwards;
+    overflow: visible;
+
+}
+
+.pic-con>img {
+    width: 100vw;
+    height: 100vh;
 }
 
 @keyframes go-big {
@@ -55,17 +51,17 @@
 }
 
 
-@for $i from 1 through 5 {
-    .go-big:nth-child(#{$i}) {
-        animation-delay: calc($i * 500ms);
-        // animation-duration: 3s;
-        // animation-timing-function: cubic-bezier(.83, 0, .08, .52);
-        // animation-name: go-up;
-        // animation-fill-mode: forwards;
+// @for $i from 1 through 5 {
+//     .pic-con:nth-child(#{$i}) {
+//         animation-delay: calc($i * 500ms);
+//         // animation-duration: 3s;
+//         // animation-timing-function: cubic-bezier(.83, 0, .08, .52);
+//         // animation-name: go-up;
+//         // animation-fill-mode: forwards;
 
-        // animation-delay: 3s;
-        // animation: 3s cubic-bezier(.83, 0, .08, .52) go-up forwards;
+//         // animation-delay: 3s;
+//         // animation: 3s cubic-bezier(.83, 0, .08, .52) go-up forwards;
 
-        // bottom: -260px * $i
-    }
-}
+//         // bottom: -260px * $i
+//     }
+// }
