@@ -1,67 +1,48 @@
-// Center
-#center-con {
-    background-color: lightblue;
+
+$img-height: 55vh;
+$img-width: 6000px;
+$gap: 20px;
+
+#tray-con {
+    position: absolute;
+    transform: translate(-104px, -50%);
     display: flex;
-    flex-direction: column;
-    height: 100vh;
+    flex-direction: row;
+    gap: $gap;
+    background-color: lightblue;
     width: 100vw;
+    // width: 150vw;
+    height: $img-height;
+}
+
+.img-con {
+    display: flex;
     align-items: center;
     justify-content: center;
-    overflow: visible;
-
-    // animation-delay: 5s;
-    animation-duration: 10s;
-    animation-timing-function: cubic-bezier(.83, 0, .08, .52);
-    animation-name: go-big;
-    animation-fill-mode: forwards;
+    background-color: lightgreen;
+    height: inherit;
+    width: $img-width;
+    overflow: hidden;
 }
 
-.pic-con {
-    animation-duration: 5s;
-    animation-timing-function: cubic-bezier(.83, 0, .08, .52);
-    animation-name: go-up;
-    animation-fill-mode: forwards;
-    overflow: visible;
+$ttt: 100px;
 
+#cc {
+    background: blue;
+    width: $ttt;
+    height: $ttt;
+    position: absolute;
 }
 
-.pic-con>img {
-    width: 100vw;
-    height: 100vh;
+.center {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    height: $ttt;
+    aspect-ratio: 1/1;
+    background-color: rgb(255, 255, 255);
 }
 
-@keyframes go-big {
-    from {
-        transform: scale(0.2);
-    }
-
-    to {
-        transform: scale(1);
-    }
-}
-
-@keyframes go-up {
-    from {
-        transform: translateY(300vh);
-    }
-
-    to {
-        transform: translateY(0);
-    }
-}
-
-
-// @for $i from 1 through 5 {
-//     .pic-con:nth-child(#{$i}) {
-//         animation-delay: calc($i * 500ms);
-//         // animation-duration: 3s;
-//         // animation-timing-function: cubic-bezier(.83, 0, .08, .52);
-//         // animation-name: go-up;
-//         // animation-fill-mode: forwards;
-
-//         // animation-delay: 3s;
-//         // animation: 3s cubic-bezier(.83, 0, .08, .52) go-up forwards;
-
-//         // bottom: -260px * $i
-//     }
+// .img-con>img{
+//     height: inherit;
+//     width: $img-width;
 // }
