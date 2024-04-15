@@ -1,17 +1,16 @@
 
-$img-height: 55vh;
-$img-width: 6000px;
-$gap: 20px;
+$img-height: 53vh;
+$img-con-width: 37vmin;
+$gap: 3vmin;
 
 #tray-con {
     position: absolute;
-    transform: translate(-104px, -50%);
+    top: calc(50% - ($img-height / 2));
+    left: calc(50% - ($img-con-width / 2));
     display: flex;
     flex-direction: row;
     gap: $gap;
-    background-color: lightblue;
-    width: 100vw;
-    // width: 150vw;
+    // background-color: lightblue;
     height: $img-height;
 }
 
@@ -19,30 +18,12 @@ $gap: 20px;
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: lightgreen;
+    // background-color: lightgreen;
     height: inherit;
-    width: $img-width;
+    width: $img-con-width;
     overflow: hidden;
 }
 
-$ttt: 100px;
-
-#cc {
-    background: blue;
-    width: $ttt;
-    height: $ttt;
-    position: absolute;
+.img-con>img{
+    transform: scale(0.65);
 }
-
-.center {
-    position: absolute;
-    transform: translate(-50%, -50%);
-    height: $ttt;
-    aspect-ratio: 1/1;
-    background-color: rgb(255, 255, 255);
-}
-
-// .img-con>img{
-//     height: inherit;
-//     width: $img-width;
-// }

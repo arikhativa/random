@@ -1,4 +1,10 @@
-import { Component, ElementRef, viewChild, ViewChild, ViewChildren } from '@angular/core';
+import { Component, ElementRef, HostListener, viewChild, ViewChild, ViewChildren } from '@angular/core';
+import * as _ from 'lodash';
+
+type Point  = {
+    x: number,
+    y: number,
+}
 
 @Component({
     selector: 'app-root',
@@ -6,22 +12,53 @@ import { Component, ElementRef, viewChild, ViewChild, ViewChildren } from '@angu
     styleUrl: './app.component.scss'
 })
 export class AppComponent {
-    @ViewChild('cards') cards: ElementRef<HTMLElement> | undefined;
+    private mousePos: Point = {x:0, y:0};
+    private mouseDownPos: Point = {x:0, y:0};
+    private isDown: boolean = false;
+    private oldScrollPercent: number = 0;
+    private currentScrollPercent = 0
     title = 'del';
-    ngAfterViewInit() {
-        if (!this.cards) return
-        this.cards.nativeElement.onmousemove = this.handleMouseMove;
+
+    constructor() {}
+  
+    @HostListener('document:mousedown', ['$event'])
+    onMouseDown(e: MouseEvent) {
+        this.mouseDownPos = {x: e.x, y: e.y}
+        this.isDown = true
     }
 
-    handleMouseMove(e: MouseEvent) {
-        const cards = Array.from(document.getElementsByClassName('card')) as HTMLElement[];
-        for (const card of cards) {
-            const rect = card.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
+    @HostListener('document:mousemove', ['$event'])
+    onMouseMove(e: MouseEvent) {
+        if (!this.isDown) return
+        
+        this.mousePos = {x: e.x, y: e.y}
 
-            card.style.setProperty('--mouse-x', `${x}px`);
-            card.style.setProperty('--mouse-y', `${y}px`);
-        }
+        const maxScroll = window.innerWidth / 2;
+
+        const curr = this.mouseDownPos.x - this.mousePos.x;
+        
+        const localPercent = (curr / maxScroll) * 100
+        
+        const nextPercent = this.oldScrollPercent + localPercent
+
+        const next = clamp(nextPercent, 0, 100)
+
+        const tray = document.getElementById("tray-con")
+        if (!tray) return
+        tray.style.transform = `translateX(-${next}%)`
+
+        this.currentScrollPercent = next
     }
+
+    @HostListener('document:mouseup', ['$event'])
+    onMouseUp(e: MouseEvent) {
+        this.oldScrollPercent = this.currentScrollPercent
+        this.isDown = false
+    }
+}
+
+function clamp(num:number, min:number, max:number):number {
+    if (num < min) return min
+    if (num > max) return max
+    return num
 }
