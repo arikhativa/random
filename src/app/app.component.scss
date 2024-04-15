@@ -10,20 +10,17 @@ $gap: 3vmin;
     display: flex;
     flex-direction: row;
     gap: $gap;
-    // background-color: lightblue;
     height: $img-height;
 }
 
 .img-con {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    // background-color: lightgreen;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    user-select: none;
+    object-fit: cover;
+    object-position: 100% center;
     height: inherit;
     width: $img-con-width;
     overflow: hidden;
-}
-
-.img-con>img{
-    transform: scale(0.65);
+    object-position: top;
 }

@@ -33,19 +33,40 @@ export class AppComponent {
         
         this.mousePos = {x: e.x, y: e.y}
 
-        const maxScroll = window.innerWidth / 2;
+        const maxScroll = window.innerWidth;
 
-        const curr = this.mouseDownPos.x - this.mousePos.x;
+        const currentPos = this.mouseDownPos.x - this.mousePos.x;
         
-        const localPercent = (curr / maxScroll) * 100
+        const localPercent = (currentPos / maxScroll) * 100
         
         const nextPercent = this.oldScrollPercent + localPercent
 
         const next = clamp(nextPercent, 0, 100)
 
-        const tray = document.getElementById("tray-con")
+        const tray = document.getElementById("tray-con")    
         if (!tray) return
-        tray.style.transform = `translateX(-${next}%)`
+        const imgContainers = document.getElementsByClassName("img-con")    
+        if (!imgContainers) return
+
+        tray.animate(
+            {
+                transform: `translateX(-${next}%)`
+            },
+            {
+                duration: 1200,
+                fill: "forwards"
+            }
+        )
+        for (const image of Array.from(imgContainers)) {
+            image.animate(
+                {
+                    objectPosition: `${100 - next}% center` //TODO fix
+                },
+                {
+                    duration: 1200,
+                    fill: "forwards"
+                })
+            }
 
         this.currentScrollPercent = next
     }
