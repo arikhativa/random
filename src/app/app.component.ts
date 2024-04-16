@@ -6,6 +6,11 @@ type Point  = {
     y: number,
 }
 
+const SCROLL_GAP = 12.572
+const WHEEL_SCROLL_SPREED = 3
+const MAX_SCROLL = 94
+const MIN_SCROLL = 6
+
 @Component({
     selector: 'app-root',
     templateUrl: './app.component.html',
@@ -15,10 +20,10 @@ export class AppComponent {
     private mousePos: Point = {x:0, y:0};
     private mouseDownPos: Point = {x:0, y:0};
     private isDown: boolean = false;
-    private canScroll: boolean = true;
+    // private canScroll: boolean = true;
     private oldScrollPercent: number = 0;
     private currentScrollPercent = 0
-    private readonly WHEEL_SCROLL_SPREED = 5
+
 
     private bigImage: HTMLElement | undefined;
     private smallImage: HTMLElement | undefined;
@@ -32,7 +37,20 @@ export class AppComponent {
         for (const i of document.getElementsByClassName("image-big")) {
             i.addEventListener("click", this.handleBigImageClick.bind(this))
         }
-        setObjectOption(0, 0)
+
+        const tray = document.getElementById("tray-con")    
+        if (!tray) return
+
+        tray.animate(
+            {
+                transform: `translateX(-${MIN_SCROLL}%)`
+            },
+            {
+                duration: 0,
+                fill: "forwards"
+            }
+        )
+        setObjectOption(MIN_SCROLL, 0)
     }
 
     handleBigImageClick(e: Event) {
@@ -45,18 +63,23 @@ export class AppComponent {
         const smallImage = document.getElementById(id)
         if (!smallImage) return
 
+        const localPercent = SCROLL_GAP * Number(id) + 6;
+
+        this.updateTrackPos(localPercent, 500)
+        this.oldScrollPercent = localPercent
+
         const rect = smallImage.getClientRects()[0]
         
         const animation = bigImage.animate(
             {
-                width: `${rect.width}px`,
                 height: `${rect.height}px`,
-                top: `${rect.top}px`,
-                left: `${rect.left}px`,
-                objectPosition: getComputedStyle(smallImage).objectPosition,
+                width: `${rect.width}px`,
+                top: `${(window.innerHeight / 2) - (rect.height / 2)}px`,
+                left: `${(window.innerWidth / 2) - (rect.width / 2)}px`,
+                objectPosition: 'center',
             },
             {
-                duration: 200,
+                duration: 600,
                 fill: "forwards"
             }
         )
@@ -67,7 +90,7 @@ export class AppComponent {
     }
 
     handleBigImageClickEnd() {
-        this.canScroll = true
+        // this.canScroll = true
      
         if (!this.bigImage || !this.smallImage) return
 
@@ -85,8 +108,7 @@ export class AppComponent {
         let bigImage = document.getElementById(`${target.id}b`)
         if (!bigImage) return
 
-        this.canScroll = false
-
+        // this.canScroll = false
 
         copyImagePosition(smallImage, bigImage)
         
@@ -97,30 +119,30 @@ export class AppComponent {
   
     @HostListener('document:wheel', ['$event'])
     onWheel(e: WheelEvent) {
-        if (!this.canScroll) return
+        // if (!this.canScroll) return
 
-        let next = this.currentScrollPercent
+        let next = this.oldScrollPercent
         if ((e.deltaY < 0) || (e.deltaX < 0)) {
-            next -= this.WHEEL_SCROLL_SPREED
+            next -= WHEEL_SCROLL_SPREED
         }
         if (e.deltaY > 0 || (e.deltaX > 0)) {
-            next += this.WHEEL_SCROLL_SPREED
+            next += WHEEL_SCROLL_SPREED
         }
-        this.currentScrollPercent = clamp(next, 0, 90)
+        this.oldScrollPercent = clamp(next, MIN_SCROLL, MAX_SCROLL)
 
-        this.updateTrackPos(this.currentScrollPercent)
+        this.updateTrackPos(this.oldScrollPercent)
     }
 
     @HostListener('document:mousedown', ['$event'])
     onMouseDown(e: MouseEvent) {
-        if (!this.canScroll) return
+        // if (!this.canScroll) return
         this.mouseDownPos = {x: e.x, y: e.y}
         this.isDown = true
     }
 
     @HostListener('document:mousemove', ['$event'])
     onMouseMove(e: MouseEvent) {
-        if (!this.canScroll) return
+        // if (!this.canScroll) return
         if (!this.isDown) return
         
         this.mousePos = {x: e.x, y: e.y}
@@ -133,7 +155,7 @@ export class AppComponent {
         
         const nextPercent = this.oldScrollPercent + localPercent
 
-        const next = clamp(nextPercent, 0, 90)
+        const next = clamp(nextPercent, MIN_SCROLL, MAX_SCROLL)
 
         this.updateTrackPos(next)
 
@@ -142,13 +164,13 @@ export class AppComponent {
 
     @HostListener('document:mouseup', ['$event'])
     onMouseUp(e: MouseEvent) {
-        if (!this.canScroll) return
+        // if (!this.canScroll) return
         this.oldScrollPercent = this.currentScrollPercent
         this.isDown = false
     }
 
-    updateTrackPos(scrollPercent: number) {
-        if (!this.canScroll) return
+    updateTrackPos(scrollPercent: number, duration?: number) {
+        // if (!this.canScroll) return
         const tray = document.getElementById("tray-con")    
         if (!tray) return
 
@@ -157,11 +179,11 @@ export class AppComponent {
                 transform: `translateX(-${scrollPercent}%)`
             },
             {
-                duration: 1200,
+                duration: duration ?? 1200,
                 fill: "forwards"
             }
         )
-        setObjectOption(scrollPercent, 1200)
+        setObjectOption(scrollPercent, duration ?? 1200)
     }
 }
 
@@ -172,14 +194,14 @@ function clamp(num:number, min:number, max:number):number {
 }
 
 function setObjectOption(scrollPercent: number, animationDuration: number) {
-    const imgContainers = document.getElementsByClassName("image")    
+    const imgContainers = document.getElementsByClassName("image") as  HTMLCollectionOf<HTMLElement>
     if (!imgContainers) return
 
     const array = Array.from(imgContainers)
     for (let i = 0 ; i <  array.length; ++i) {
         array[i].animate(
         {
-            objectPosition: `${50 + (10 * i) - scrollPercent}% center`
+            objectPosition: `${56 + (i * SCROLL_GAP) - scrollPercent}% center`
         },
         {
             duration: animationDuration,
@@ -191,11 +213,17 @@ function setObjectOption(scrollPercent: number, animationDuration: number) {
 function copyImagePosition(src:HTMLElement, dest:HTMLElement) {
     const rect = src.getClientRects()[0]
 
-    dest.style.width = `${rect.width}px`
-    dest.style.height = `${rect.height}px`
-    dest.style.top = `${rect.top}px`
-    dest.style.left = `${rect.left}px`
-    dest.style.objectPosition = getComputedStyle(src).objectPosition
+    dest.animate({
+        width: `${rect.width}px`,
+        height: `${rect.height}px`,
+        top:  `${rect.top}px`,
+        left: `${rect.left}px`,
+        objectPosition: getComputedStyle(src).objectPosition
+    },
+    {
+        duration: 0,
+        fill: "forwards"
+    })
 }
 
 
@@ -205,7 +233,8 @@ function setImageFullScreen(image: HTMLElement) {
             width: "100%",
             height: "100%",
             top: 0,
-            left: 0
+            left: 0,
+            zIndex: 5
         },
         {
             easing: "cubic-bezier(.3,1,0,.98)",
