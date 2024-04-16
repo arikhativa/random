@@ -17,19 +17,26 @@ export class AppComponent {
     private isDown: boolean = false;
     private oldScrollPercent: number = 0;
     private currentScrollPercent = 0
-    private imgWidth = 0
     title = 'del';
-
-    constructor() {}
-
+    
     ngAfterViewInit() {
-        const images = document.getElementsByClassName("image")
-        const rect = images[0].getClientRects()
-        this.imgWidth = rect[0].width
-
         setObjectOption(0, 0)
     }
   
+    @HostListener('document:wheel', ['$event'])
+    onWheel(e: WheelEvent) {
+        let next = this.currentScrollPercent
+        if ((e.deltaY < 0) || (e.deltaX < 0)) {
+            next -= 1
+        }
+        if (e.deltaY > 0 || (e.deltaX > 0)) {
+            next += 1
+        }
+        this.currentScrollPercent = clamp(next, 0, 90)
+
+        this.updateTrackPos(this.currentScrollPercent)
+    }
+
     @HostListener('document:mousedown', ['$event'])
     onMouseDown(e: MouseEvent) {
         this.mouseDownPos = {x: e.x, y: e.y}
@@ -52,19 +59,7 @@ export class AppComponent {
 
         const next = clamp(nextPercent, 0, 90)
 
-        const tray = document.getElementById("tray-con")    
-        if (!tray) return
-
-        tray.animate(
-            {
-                transform: `translateX(-${next}%)`
-            },
-            {
-                duration: 1200,
-                fill: "forwards"
-            }
-        )
-        setObjectOption(next, 1200)
+        this.updateTrackPos(next)
 
         this.currentScrollPercent = next
     }
@@ -73,6 +68,22 @@ export class AppComponent {
     onMouseUp(e: MouseEvent) {
         this.oldScrollPercent = this.currentScrollPercent
         this.isDown = false
+    }
+
+    updateTrackPos(scrollPercent: number) {
+        const tray = document.getElementById("tray-con")    
+        if (!tray) return
+
+        tray.animate(
+            {
+                transform: `translateX(-${scrollPercent}%)`
+            },
+            {
+                duration: 1200,
+                fill: "forwards"
+            }
+        )
+        setObjectOption(scrollPercent, 1200)
     }
 }
 
