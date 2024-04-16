@@ -20,6 +20,10 @@ export class AppComponent {
     title = 'del';
 
     constructor() {}
+
+    ngAfterViewInit() {
+        setObjectOption(0, 0)
+    }
   
     @HostListener('document:mousedown', ['$event'])
     onMouseDown(e: MouseEvent) {
@@ -45,8 +49,6 @@ export class AppComponent {
 
         const tray = document.getElementById("tray-con")    
         if (!tray) return
-        const imgContainers = document.getElementsByClassName("img-con")    
-        if (!imgContainers) return
 
         tray.animate(
             {
@@ -57,16 +59,7 @@ export class AppComponent {
                 fill: "forwards"
             }
         )
-        for (const image of Array.from(imgContainers)) {
-            image.animate(
-                {
-                    objectPosition: `${100 - next}% center` //TODO fix
-                },
-                {
-                    duration: 1200,
-                    fill: "forwards"
-                })
-            }
+        setObjectOption(next, 1200)
 
         this.currentScrollPercent = next
     }
@@ -82,4 +75,21 @@ function clamp(num:number, min:number, max:number):number {
     if (num < min) return min
     if (num > max) return max
     return num
+}
+
+function setObjectOption(scrollPercent: number, animationDuration: number) {
+    const imgContainers = document.getElementsByClassName("image")    
+    if (!imgContainers) return
+
+    const array = Array.from(imgContainers)
+    for (let i = 0 ; i <  array.length; ++i) {
+        array[i].animate(
+        {
+            objectPosition: `${50 + (10 * i) - scrollPercent}% center`
+        },
+        {
+            duration: animationDuration,
+            fill: "forwards"
+        })
+    }
 }

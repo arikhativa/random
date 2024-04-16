@@ -1,26 +1,26 @@
 
-$img-height: 53vh;
-$img-con-width: 37vmin;
+$track-height: 53vh;
+// $img-height: 53vh;
+$img-width: 37vmin;
 $gap: 3vmin;
 
 #tray-con {
     position: absolute;
-    top: calc(50% - ($img-height / 2));
-    left: calc(50% - ($img-con-width / 2));
+    top: calc(50% - ($track-height / 2));
+    left: calc(50% - ($img-width / 2));
     display: flex;
     flex-direction: row;
     gap: $gap;
-    height: $img-height;
+    height: $track-height;
 }
 
-.img-con {
+.image {
     -moz-user-select: none;
     -webkit-user-select: none;
     user-select: none;
     object-fit: cover;
-    object-position: 100% center;
-    height: inherit;
-    width: $img-con-width;
+    // object-position: 50% center;
+    // height: $img-height;
+    width: $img-width;
     overflow: hidden;
-    object-position: top;
 }
