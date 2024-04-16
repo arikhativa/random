@@ -17,20 +17,59 @@ export class AppComponent {
     private isDown: boolean = false;
     private oldScrollPercent: number = 0;
     private currentScrollPercent = 0
+    private readonly WHEEL_SCROLL_SPREED = 5
     title = 'del';
     
     ngAfterViewInit() {
+        const images = document.getElementsByClassName("image")
+        for (const image of images) {
+            image.addEventListener("click", this.handleImageClick)
+        }
         setObjectOption(0, 0)
+    }
+
+    handleImageClick(e: Event) {
+        const images = document.getElementsByClassName("image")
+        const smallImage = images[0] as HTMLElement
+
+        let bigImage = document.getElementById("bigImage")
+        if (!bigImage) return
+
+        const sRect = smallImage.getClientRects()[0]
+        let bRect = bigImage.getClientRects()[0]
+        bRect = sRect
+        bigImage.style.width = `${sRect.width}px`
+        bigImage.style.height = `${sRect.height}px`
+        bigImage.style.top = `${sRect.top}px`
+        bigImage.style.left = `${sRect.left}px`
+
+        bigImage.style.objectPosition = getComputedStyle(smallImage).objectPosition
+        bigImage.style.visibility = "visible"
+        smallImage.style.visibility = "hidden"
+
+        bigImage.animate(
+            {
+                width: "100%",
+                height: "100%",
+                top: 0,
+                left: 0
+            },
+            {
+                easing:"cubic-bezier(.3,1,0,.98)",
+                duration: 1500,
+                fill: "forwards"
+            }
+        )
     }
   
     @HostListener('document:wheel', ['$event'])
     onWheel(e: WheelEvent) {
         let next = this.currentScrollPercent
         if ((e.deltaY < 0) || (e.deltaX < 0)) {
-            next -= 1
+            next -= this.WHEEL_SCROLL_SPREED
         }
         if (e.deltaY > 0 || (e.deltaX > 0)) {
-            next += 1
+            next += this.WHEEL_SCROLL_SPREED
         }
         this.currentScrollPercent = clamp(next, 0, 90)
 

@@ -23,9 +23,9 @@ $gap: 3vmin;
     overflow: hidden;
 }
 
-
-#big {
-    height: 300vh;
-    width: 100vw;
-    background: lightpink;
+.image-big {
+    object-fit: cover;
+    position: fixed;
+    z-index: 5;
+    visibility: hidden;
 }
