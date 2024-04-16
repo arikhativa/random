@@ -17,11 +17,16 @@ export class AppComponent {
     private isDown: boolean = false;
     private oldScrollPercent: number = 0;
     private currentScrollPercent = 0
+    private imgWidth = 0
     title = 'del';
 
     constructor() {}
 
     ngAfterViewInit() {
+        const images = document.getElementsByClassName("image")
+        const rect = images[0].getClientRects()
+        this.imgWidth = rect[0].width
+
         setObjectOption(0, 0)
     }
   
@@ -45,7 +50,7 @@ export class AppComponent {
         
         const nextPercent = this.oldScrollPercent + localPercent
 
-        const next = clamp(nextPercent, 0, 100)
+        const next = clamp(nextPercent, 0, 90)
 
         const tray = document.getElementById("tray-con")    
         if (!tray) return

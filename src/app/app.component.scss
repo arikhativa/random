@@ -1,10 +1,13 @@
 
 $track-height: 53vh;
-// $img-height: 53vh;
 $img-width: 37vmin;
 $gap: 3vmin;
 
 #tray-con {
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    user-select: none;
+
     position: absolute;
     top: calc(50% - ($track-height / 2));
     left: calc(50% - ($img-width / 2));
@@ -15,12 +18,7 @@ $gap: 3vmin;
 }
 
 .image {
-    -moz-user-select: none;
-    -webkit-user-select: none;
-    user-select: none;
     object-fit: cover;
-    // object-position: 50% center;
-    // height: $img-height;
     width: $img-width;
     overflow: hidden;
 }
