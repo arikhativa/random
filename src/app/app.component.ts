@@ -15,55 +15,90 @@ export class AppComponent {
     private mousePos: Point = {x:0, y:0};
     private mouseDownPos: Point = {x:0, y:0};
     private isDown: boolean = false;
+    private canScroll: boolean = true;
     private oldScrollPercent: number = 0;
     private currentScrollPercent = 0
     private readonly WHEEL_SCROLL_SPREED = 5
+
+    private bigImage: HTMLElement | undefined;
+    private smallImage: HTMLElement | undefined;
+
     title = 'del';
     
     ngAfterViewInit() {
-        const images = document.getElementsByClassName("image")
-        for (const image of images) {
-            image.addEventListener("click", this.handleImageClick)
+        for (const i of document.getElementsByClassName("image")) {
+            i.addEventListener("click", this.handleImageClick.bind(this))
+        }
+        for (const i of document.getElementsByClassName("image-big")) {
+            i.addEventListener("click", this.handleBigImageClick.bind(this))
         }
         setObjectOption(0, 0)
     }
 
-    handleImageClick(e: Event) {
-        const images = document.getElementsByClassName("image")
-        const smallImage = images[0] as HTMLElement
+    handleBigImageClick(e: Event) {
+        const target = e.target as HTMLElement
 
-        let bigImage = document.getElementById("bigImage")
+        const id = target.id.substring(0, 1);
+        let bigImage = document.getElementById(`${id}b`)
         if (!bigImage) return
+        
+        const smallImage = document.getElementById(id)
+        if (!smallImage) return
 
-        const sRect = smallImage.getClientRects()[0]
-        let bRect = bigImage.getClientRects()[0]
-        bRect = sRect
-        bigImage.style.width = `${sRect.width}px`
-        bigImage.style.height = `${sRect.height}px`
-        bigImage.style.top = `${sRect.top}px`
-        bigImage.style.left = `${sRect.left}px`
-
-        bigImage.style.objectPosition = getComputedStyle(smallImage).objectPosition
-        bigImage.style.visibility = "visible"
-        smallImage.style.visibility = "hidden"
-
-        bigImage.animate(
+        const rect = smallImage.getClientRects()[0]
+        
+        const animation = bigImage.animate(
             {
-                width: "100%",
-                height: "100%",
-                top: 0,
-                left: 0
+                width: `${rect.width}px`,
+                height: `${rect.height}px`,
+                top: `${rect.top}px`,
+                left: `${rect.left}px`,
+                objectPosition: getComputedStyle(smallImage).objectPosition,
             },
             {
-                easing:"cubic-bezier(.3,1,0,.98)",
-                duration: 1500,
+                duration: 200,
                 fill: "forwards"
             }
         )
+
+        this.bigImage = bigImage
+        this.smallImage = smallImage
+        animation.finished.then(this.handleBigImageClickEnd.bind(this));
+    }
+
+    handleBigImageClickEnd() {
+        this.canScroll = true
+     
+        if (!this.bigImage || !this.smallImage) return
+
+        this.smallImage.style.visibility = "visible"
+        this.bigImage.style.visibility = "hidden"
+    }
+
+    handleImageClick(e: Event) {
+
+        const target = e.target as HTMLElement
+
+        const smallImage = document.getElementById(target.id)
+        if (!smallImage) return
+
+        let bigImage = document.getElementById(`${target.id}b`)
+        if (!bigImage) return
+
+        this.canScroll = false
+
+
+        copyImagePosition(smallImage, bigImage)
+        
+        bigImage.style.visibility = "visible"
+        smallImage.style.visibility = "hidden"
+        setImageFullScreen(bigImage)
     }
   
     @HostListener('document:wheel', ['$event'])
     onWheel(e: WheelEvent) {
+        if (!this.canScroll) return
+
         let next = this.currentScrollPercent
         if ((e.deltaY < 0) || (e.deltaX < 0)) {
             next -= this.WHEEL_SCROLL_SPREED
@@ -78,12 +113,14 @@ export class AppComponent {
 
     @HostListener('document:mousedown', ['$event'])
     onMouseDown(e: MouseEvent) {
+        if (!this.canScroll) return
         this.mouseDownPos = {x: e.x, y: e.y}
         this.isDown = true
     }
 
     @HostListener('document:mousemove', ['$event'])
     onMouseMove(e: MouseEvent) {
+        if (!this.canScroll) return
         if (!this.isDown) return
         
         this.mousePos = {x: e.x, y: e.y}
@@ -105,11 +142,13 @@ export class AppComponent {
 
     @HostListener('document:mouseup', ['$event'])
     onMouseUp(e: MouseEvent) {
+        if (!this.canScroll) return
         this.oldScrollPercent = this.currentScrollPercent
         this.isDown = false
     }
 
     updateTrackPos(scrollPercent: number) {
+        if (!this.canScroll) return
         const tray = document.getElementById("tray-con")    
         if (!tray) return
 
@@ -148,3 +187,31 @@ function setObjectOption(scrollPercent: number, animationDuration: number) {
         })
     }
 }
+
+function copyImagePosition(src:HTMLElement, dest:HTMLElement) {
+    const rect = src.getClientRects()[0]
+
+    dest.style.width = `${rect.width}px`
+    dest.style.height = `${rect.height}px`
+    dest.style.top = `${rect.top}px`
+    dest.style.left = `${rect.left}px`
+    dest.style.objectPosition = getComputedStyle(src).objectPosition
+}
+
+
+function setImageFullScreen(image: HTMLElement) {
+    image.animate(
+        {
+            width: "100%",
+            height: "100%",
+            top: 0,
+            left: 0
+        },
+        {
+            easing: "cubic-bezier(.3,1,0,.98)",
+            duration: 1500,
+            fill: "forwards"
+        }
+    )
+}
+
