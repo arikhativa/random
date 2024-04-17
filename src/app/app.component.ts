@@ -20,13 +20,13 @@ export class AppComponent {
     private mousePos: Point = {x:0, y:0};
     private mouseDownPos: Point = {x:0, y:0};
     private isDown: boolean = false;
-    // private canScroll: boolean = true;
     private oldScrollPercent: number = 0;
     private currentScrollPercent = 0
+    private isModeFullScreen = false
 
 
-    private bigImage: HTMLElement | undefined;
-    private smallImage: HTMLElement | undefined;
+    private bigImage: HTMLElement = {} as HTMLElement;
+    private smallImage: HTMLElement = {} as HTMLElement;
 
     title = 'del';
     
@@ -35,7 +35,7 @@ export class AppComponent {
             i.addEventListener("click", this.handleImageClick.bind(this))
         }
         for (const i of document.getElementsByClassName("image-big")) {
-            i.addEventListener("click", this.handleBigImageClick.bind(this))
+            i.addEventListener("click", this.handleClickFullScreen.bind(this))
         }
 
         const tray = document.getElementById("tray-con")    
@@ -53,74 +53,13 @@ export class AppComponent {
         setObjectOption(MIN_SCROLL, 0)
     }
 
-    handleBigImageClick(e: Event) {
-        const target = e.target as HTMLElement
-
-        const id = target.id.substring(0, 1);
-        let bigImage = document.getElementById(`${id}b`)
-        if (!bigImage) return
-        
-        const smallImage = document.getElementById(id)
-        if (!smallImage) return
-
-        const localPercent = SCROLL_GAP * Number(id) + 6;
-
-        this.updateTrackPos(localPercent, 500)
-        this.oldScrollPercent = localPercent
-
-        const rect = smallImage.getClientRects()[0]
-        
-        const animation = bigImage.animate(
-            {
-                height: `${rect.height}px`,
-                width: `${rect.width}px`,
-                top: `${(window.innerHeight / 2) - (rect.height / 2)}px`,
-                left: `${(window.innerWidth / 2) - (rect.width / 2)}px`,
-                objectPosition: 'center',
-            },
-            {
-                duration: 600,
-                fill: "forwards"
-            }
-        )
-
-        this.bigImage = bigImage
-        this.smallImage = smallImage
-        animation.finished.then(this.handleBigImageClickEnd.bind(this));
-    }
-
-    handleBigImageClickEnd() {
-        // this.canScroll = true
-     
-        if (!this.bigImage || !this.smallImage) return
-
-        this.smallImage.style.visibility = "visible"
-        this.bigImage.style.visibility = "hidden"
-    }
-
-    handleImageClick(e: Event) {
-
-        const target = e.target as HTMLElement
-
-        const smallImage = document.getElementById(target.id)
-        if (!smallImage) return
-
-        let bigImage = document.getElementById(`${target.id}b`)
-        if (!bigImage) return
-
-        // this.canScroll = false
-
-        copyImagePosition(smallImage, bigImage)
-        
-        bigImage.style.visibility = "visible"
-        smallImage.style.visibility = "hidden"
-        setImageFullScreen(bigImage)
-    }
-  
     @HostListener('document:wheel', ['$event'])
     onWheel(e: WheelEvent) {
-        // if (!this.canScroll) return
-
+        if (this.isModeFullScreen) {
+            this.handleScrollOnFullScreenMode()
+            return
+        }
+        
         let next = this.oldScrollPercent
         if ((e.deltaY < 0) || (e.deltaX < 0)) {
             next -= WHEEL_SCROLL_SPREED
@@ -129,48 +68,100 @@ export class AppComponent {
             next += WHEEL_SCROLL_SPREED
         }
         this.oldScrollPercent = clamp(next, MIN_SCROLL, MAX_SCROLL)
-
         this.updateTrackPos(this.oldScrollPercent)
     }
 
     @HostListener('document:mousedown', ['$event'])
     onMouseDown(e: MouseEvent) {
-        // if (!this.canScroll) return
         this.mouseDownPos = {x: e.x, y: e.y}
         this.isDown = true
     }
 
     @HostListener('document:mousemove', ['$event'])
     onMouseMove(e: MouseEvent) {
-        // if (!this.canScroll) return
         if (!this.isDown) return
         
         this.mousePos = {x: e.x, y: e.y}
 
-        const maxScroll = window.innerWidth;
-
-        const currentPos = this.mouseDownPos.x - this.mousePos.x;
-        
-        const localPercent = (currentPos / maxScroll) * 100
-        
+        const localPercent = ((this.mouseDownPos.x - this.mousePos.x) / window.innerWidth) * 100
         const nextPercent = this.oldScrollPercent + localPercent
-
         const next = clamp(nextPercent, MIN_SCROLL, MAX_SCROLL)
 
         this.updateTrackPos(next)
-
         this.currentScrollPercent = next
     }
 
     @HostListener('document:mouseup', ['$event'])
     onMouseUp(e: MouseEvent) {
-        // if (!this.canScroll) return
         this.oldScrollPercent = this.currentScrollPercent
         this.isDown = false
     }
 
+    handleImageClick(e: Event) {
+        const target = e.target as HTMLElement
+
+        this.saveImagesOnThis(target.id)
+        copyImagePosition(this.smallImage, this.bigImage)
+        this.bigImage.style.visibility = "visible"
+        this.smallImage.style.visibility = "hidden"
+        setImageFullScreen(this.bigImage)
+        this.isModeFullScreen = true
+    }
+
+    private handleScrollOnFullScreenMode() {
+        const localPercent = SCROLL_GAP * Number(this.smallImage.id) + MIN_SCROLL;
+
+        this.updateTrackPos(localPercent, 500)
+        this.oldScrollPercent = localPercent
+
+        this.unSetImageFullScreen()
+        this.isModeFullScreen = false
+    }
+
+    private unSetImageFullScreen() {
+        const rect = this.smallImage.getClientRects()[0]
+        const animation = this.bigImage.animate(
+            {
+                height: `${rect.height}px`,
+                width: `${rect.width}px`,
+                top: `${(window.innerHeight / 2) - (rect.height / 2)}px`,
+                left: `${(window.innerWidth / 2) - (rect.width / 2)}px`,
+                objectPosition: 'center',
+            },
+            // {
+            //     easing: "cubic-bezier(.3,1,0,.98)",
+            //     duration: 1000,
+            //     fill: "forwards"
+            // }
+            {
+                duration: 600,
+                fill: "forwards"
+            }
+        )
+        animation.finished.then(this.unSetImageFullScreenOnFinish.bind(this));
+    }
+
+    private unSetImageFullScreenOnFinish() {
+        this.smallImage.style.visibility = "visible"
+        this.bigImage.style.visibility = "hidden"
+    }
+
+    // TODO
+    handleClickFullScreen(e: Event) {
+    }
+
+ 
+    private saveImagesOnThis(id: string) {
+        const smallImage = document.getElementById(id)
+        if (!smallImage) return
+        this.smallImage = smallImage
+        
+        const bigImage = document.getElementById(`${id}b`)
+        if (!bigImage) return
+        this.bigImage = bigImage
+    }
+
     updateTrackPos(scrollPercent: number, duration?: number) {
-        // if (!this.canScroll) return
         const tray = document.getElementById("tray-con")    
         if (!tray) return
 
