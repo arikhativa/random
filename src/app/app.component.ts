@@ -58,7 +58,7 @@ export class AppComponent {
     @HostListener('document:wheel', ['$event'])
     onWheel(e: WheelEvent) {
         if (this.isModeFullScreen) {
-            this.handleScrollOnFullScreenMode()
+            this.unSetFullScreen()
             return
         }
 
@@ -105,19 +105,64 @@ export class AppComponent {
         const target = e.target as HTMLElement
 
         this.saveImagesOnThis(target.id)
+        this.setFullScreen(target.id)
+    }
+
+    private setFullScreen(id: string) {
         copyImagePosition(this.smallImage, this.bigImage)
         this.bigImage.style.visibility = "visible"
         this.smallImage.style.visibility = "hidden"
         setImageFullScreen(this.bigImage)
+
+        this.setTitle(id)
+
         this.isModeFullScreen = true
     }
 
-    private handleScrollOnFullScreenMode() {
+    private setTitle(id: string) {
+        const elem = document.getElementById(`${id}t`)
+        if (!elem) return
+
+        elem.animate({
+            transform: "translateY(0)"
+        }, {
+            delay: 200,
+            easing: "ease-out",
+            duration: 1000,
+            fill: "forwards"
+        })
+    }
+
+    private unSetTitle(id: string) {
+        const elem = document.getElementById(`${id}t`)
+        if (!elem) return
+
+        const animation = elem.animate({
+            transform: "translateY(-200%)"
+        }, {
+            easing: "cubic-bezier(.3,1,0,.98)",
+            duration: 1000,
+            fill: "forwards"
+        })
+
+        animation.finished.then(() => {
+            elem.animate({
+                transform: "translateY(200%)"
+            }, {
+                duration: 0,
+                fill: "forwards"
+            })
+        })
+    }
+
+    private unSetFullScreen() {
         this.canScroll = false
         const localPercent = SCROLL_GAP * Number(this.smallImage.id) + MIN_SCROLL;
 
         this.updateTrackPos(localPercent, 500)
         this.oldScrollPercent = localPercent
+
+        this.unSetTitle(this.smallImage.id)
 
         this.unSetImageFullScreen()
         this.isModeFullScreen = false

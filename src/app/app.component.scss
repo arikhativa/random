@@ -17,10 +17,6 @@ $gap: 3vmin;
     height: $track-height;
 }
 
-#some-div {
-    background: url(https://i.stack.imgur.com/SHV0i.png) 50% 50% no-repeat;
-  }
-
 .image {
     object-fit: cover;
     width: $img-width;
@@ -30,8 +26,24 @@ $gap: 3vmin;
 .image-big {
     object-fit: cover;
     position: fixed;
-    z-index: 5;
+    z-index: 2;
     visibility: hidden;
+}
+
+.fs-title {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100px;
+    width: 30vw;
+    background: lightblue;
+    z-index: 11;
+    overflow: hidden;
+}
+
+.fs-title>h1 {
+    transform: translateY(200%);
 }
 
 #center {
@@ -44,3 +56,4 @@ $gap: 3vmin;
     transform: translate(-50%, -50%);
     z-index: 10;
 }
+
