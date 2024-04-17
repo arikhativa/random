@@ -6,10 +6,11 @@ type Point  = {
     y: number,
 }
 
-const SCROLL_GAP = 12.572
+const SCROLL_GAP = 12.617
+// const SCROLL_GAP = 12.572
 const WHEEL_SCROLL_SPREED = 3
-const MAX_SCROLL = 94
-const MIN_SCROLL = 6
+const MAX_SCROLL = 94.16
+const MIN_SCROLL = 5.84
 
 @Component({
     selector: 'app-root',
@@ -23,6 +24,7 @@ export class AppComponent {
     private oldScrollPercent: number = 0;
     private currentScrollPercent = 0
     private isModeFullScreen = false
+    private canScroll = true
 
 
     private bigImage: HTMLElement = {} as HTMLElement;
@@ -50,7 +52,7 @@ export class AppComponent {
                 fill: "forwards"
             }
         )
-        setObjectOption(MIN_SCROLL, 0)
+        setImagePosition(MIN_SCROLL, 0)
     }
 
     @HostListener('document:wheel', ['$event'])
@@ -59,6 +61,8 @@ export class AppComponent {
             this.handleScrollOnFullScreenMode()
             return
         }
+
+        if (!this.canScroll) return
         
         let next = this.oldScrollPercent
         if ((e.deltaY < 0) || (e.deltaX < 0)) {
@@ -109,6 +113,7 @@ export class AppComponent {
     }
 
     private handleScrollOnFullScreenMode() {
+        this.canScroll = false
         const localPercent = SCROLL_GAP * Number(this.smallImage.id) + MIN_SCROLL;
 
         this.updateTrackPos(localPercent, 500)
@@ -128,13 +133,9 @@ export class AppComponent {
                 left: `${(window.innerWidth / 2) - (rect.width / 2)}px`,
                 objectPosition: 'center',
             },
-            // {
-            //     easing: "cubic-bezier(.3,1,0,.98)",
-            //     duration: 1000,
-            //     fill: "forwards"
-            // }
             {
-                duration: 600,
+                easing: "cubic-bezier(.3,1,0,.98)",
+                duration: 1000,
                 fill: "forwards"
             }
         )
@@ -142,6 +143,7 @@ export class AppComponent {
     }
 
     private unSetImageFullScreenOnFinish() {
+        this.canScroll = true
         this.smallImage.style.visibility = "visible"
         this.bigImage.style.visibility = "hidden"
     }
@@ -174,7 +176,7 @@ export class AppComponent {
                 fill: "forwards"
             }
         )
-        setObjectOption(scrollPercent, duration ?? 1200)
+        setImagePosition(scrollPercent, duration ?? 1200)
     }
 }
 
@@ -184,7 +186,7 @@ function clamp(num:number, min:number, max:number):number {
     return num
 }
 
-function setObjectOption(scrollPercent: number, animationDuration: number) {
+function setImagePosition(scrollPercent: number, animationDuration: number) {
     const imgContainers = document.getElementsByClassName("image") as  HTMLCollectionOf<HTMLElement>
     if (!imgContainers) return
 
@@ -192,7 +194,7 @@ function setObjectOption(scrollPercent: number, animationDuration: number) {
     for (let i = 0 ; i <  array.length; ++i) {
         array[i].animate(
         {
-            objectPosition: `${56 + (i * SCROLL_GAP) - scrollPercent}% center`
+            objectPosition: `${50 + MIN_SCROLL + (i * SCROLL_GAP) - scrollPercent}% center`
         },
         {
             duration: animationDuration,

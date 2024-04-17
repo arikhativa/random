@@ -17,6 +17,10 @@ $gap: 3vmin;
     height: $track-height;
 }
 
+#some-div {
+    background: url(https://i.stack.imgur.com/SHV0i.png) 50% 50% no-repeat;
+  }
+
 .image {
     object-fit: cover;
     width: $img-width;
@@ -31,8 +35,8 @@ $gap: 3vmin;
 }
 
 #center {
-    width: 1vmin;
-    height: 1vmin;
+    height: 3vmin;
+    width: $img-width;
     background: lightgray;
     position: fixed;
     top: 50%;
