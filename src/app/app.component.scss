@@ -37,12 +37,12 @@ $gap: 3vmin;
     align-items: center;
     height: 100px;
     width: 30vw;
-    background: lightblue;
     z-index: 11;
     overflow: hidden;
 }
 
 .fs-title>h1 {
+    color: white;
     transform: translateY(200%);
 }
 

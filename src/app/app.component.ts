@@ -7,7 +7,6 @@ type Point  = {
 }
 
 const SCROLL_GAP = 12.617
-// const SCROLL_GAP = 12.572
 const WHEEL_SCROLL_SPREED = 3
 const MAX_SCROLL = 94.16
 const MIN_SCROLL = 5.84
@@ -25,6 +24,7 @@ export class AppComponent {
     private currentScrollPercent = 0
     private isModeFullScreen = false
     private canScroll = true
+    private titles = ["The Regeneration Suite", "1", "2", "3", "4", "5", "6", "7"]
 
 
     private bigImage: HTMLElement = {} as HTMLElement;
@@ -120,8 +120,10 @@ export class AppComponent {
     }
 
     private setTitle(id: string) {
-        const elem = document.getElementById(`${id}t`)
+        const elem = document.getElementById(`title`)
         if (!elem) return
+
+        elem.innerText = this.titles[Number(id)]
 
         elem.animate({
             transform: "translateY(0)"
@@ -133,15 +135,15 @@ export class AppComponent {
         })
     }
 
-    private unSetTitle(id: string) {
-        const elem = document.getElementById(`${id}t`)
+    private unSetTitle() {
+        const elem = document.getElementById(`title`)
         if (!elem) return
 
         const animation = elem.animate({
             transform: "translateY(-200%)"
         }, {
             easing: "cubic-bezier(.3,1,0,.98)",
-            duration: 1000,
+            duration: 700,
             fill: "forwards"
         })
 
@@ -162,7 +164,7 @@ export class AppComponent {
         this.updateTrackPos(localPercent, 500)
         this.oldScrollPercent = localPercent
 
-        this.unSetTitle(this.smallImage.id)
+        this.unSetTitle()
 
         this.unSetImageFullScreen()
         this.isModeFullScreen = false
