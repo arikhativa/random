@@ -114,21 +114,133 @@ export class AppComponent {
         this.smallImage.style.visibility = "hidden"
         setImageFullScreen(this.bigImage)
 
+        this.setMainLogo()
         this.setTitle(id)
+        this.setLogos()
 
         this.isModeFullScreen = true
     }
 
+    private setMainLogo() {
+        const logoContainer = document.getElementById(`main-logo-con`)
+        if (!logoContainer) return
+    
+        const logo = document.getElementById(`main-logo`)
+        if (!logo) return
+
+        logoContainer.animate({
+            transform: "translateY(-300px)"
+        },{
+            easing: "ease-in",
+            duration: 1200,
+            fill: "forwards"
+        })
+
+        logo.animate({
+            transform: "translateY(300px)"
+        },{
+            easing: "ease-in",
+            duration: 1200,
+            fill: "forwards"
+        })
+    }
+
+    private unSetMainLogo() {
+        const logoContainer = document.getElementById(`main-logo-con`)
+        if (!logoContainer) return
+    
+        const logo = document.getElementById(`main-logo`)
+        if (!logo) return
+
+        const a =  logoContainer.animate({
+            transform: "translateY(0)"
+        },{
+            easing: "ease-in",
+            duration: 1200,
+            fill: "forwards"
+        })
+
+        const b = logo.animate({
+            transform: "translateY(0)"
+        },{
+            easing: "ease-in",
+            duration: 1200,
+            fill: "forwards"
+        })
+    }
+
+    private setLogos() {
+        const logoList = document.getElementsByClassName(`fs-logo`)
+        if (!logoList || logoList.length < 2) return
+
+        logoList[0].animate({
+            transform: "translateY(0%) rotate(0.25turn)"
+        }, {
+            delay: 500,
+            easing: "ease-out",
+            duration: 1000,
+            fill: "forwards"
+        })
+
+        logoList[1].animate({
+            transform: "translateY(0%) rotate(-0.25turn)"
+        }, {
+            delay: 500,
+            easing: "ease-out",
+            duration: 1000,
+            fill: "forwards"
+        })
+    }
+
+    private unSetLogos() {
+        const logoList = document.getElementsByClassName(`fs-logo`)
+        if (!logoList || logoList.length < 2) return
+
+        const animation1 = logoList[0].animate({
+            transform: "translateY(-300%) rotate(0.5turn)"
+        }, {
+            easing: "cubic-bezier(.3,1,0,.98)",
+            duration: 700,
+            fill: "forwards"
+        })
+        
+        const animation2 = logoList[1].animate({
+            transform: "translateY(-200%) rotate(-0.5turn)"
+        }, {
+            easing: "cubic-bezier(.3,1,0,.98)",
+            duration: 700,
+            fill: "forwards"
+        })
+
+        animation1.finished.then(() => {
+            logoList[0].animate({
+                transform: "translateY(200%)"
+            }, {
+                duration: 0,
+                fill: "forwards"
+            })
+        })
+
+        animation2.finished.then(() => {
+            logoList[1].animate({
+                transform: "translateY(200%)"
+            }, {
+                duration: 0,
+                fill: "forwards"
+            })
+        })
+    }
+
     private setTitle(id: string) {
-        const elem = document.getElementById(`title`)
-        if (!elem) return
+        const title = document.getElementById(`title`)
+        if (!title) return
 
-        elem.innerText = this.titles[Number(id)]
+        title.innerText = this.titles[Number(id)]
 
-        elem.animate({
+        title.animate({
             transform: "translateY(0)"
         }, {
-            delay: 200,
+            delay: 500,
             easing: "ease-out",
             duration: 1000,
             fill: "forwards"
@@ -165,6 +277,8 @@ export class AppComponent {
         this.oldScrollPercent = localPercent
 
         this.unSetTitle()
+        this.unSetLogos()
+        this.unSetMainLogo()
 
         this.unSetImageFullScreen()
         this.isModeFullScreen = false

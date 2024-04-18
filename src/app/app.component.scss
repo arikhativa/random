@@ -30,13 +30,40 @@ $gap: 3vmin;
     visibility: hidden;
 }
 
+app-neg-logo {
+    position: fixed;
+    background: transparent;
+    top: 40%;
+    z-index: 10000;
+    left: 50%;
+}
+
+#main-logo-con {
+    border-radius: 100%;
+    height: 200px;
+    width: 200px;
+    position: absolute;
+    top: calc(50% - 100px);
+    left: calc(50% - 100px);
+
+
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    z-index: 11;
+    overflow: hidden;
+}
+
 .fs-title {
     position: relative;
     display: flex;
+    flex-direction: row;
     justify-content: center;
+    gap: 20vw;
     align-items: center;
     height: 100px;
-    width: 30vw;
+    width: 100vw;
     z-index: 11;
     overflow: hidden;
 }
@@ -46,14 +73,7 @@ $gap: 3vmin;
     transform: translateY(200%);
 }
 
-#center {
-    height: 3vmin;
-    width: $img-width;
-    background: lightgray;
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 10;
+.fs-title>app-logo {
+    transform: translateY(200%);
 }
 
