@@ -1,79 +1,29 @@
-
-$track-height: 53vh;
-$img-width: 37vmin;
-$gap: 3vmin;
-
-#tray-con {
-    -moz-user-select: none;
-    -webkit-user-select: none;
-    user-select: none;
-
-    position: absolute;
-    top: calc(50% - ($track-height / 2));
-    left: calc(50%);
-    display: flex;
-    flex-direction: row;
-    gap: $gap;
-    height: $track-height;
-}
-
-.image {
-    object-fit: cover;
-    width: $img-width;
-    overflow: hidden;
-}
-
-.image-big {
-    object-fit: cover;
-    position: fixed;
-    z-index: 2;
-    visibility: hidden;
-}
-
-app-neg-logo {
-    position: fixed;
-    background: transparent;
-    top: 40%;
-    z-index: 10000;
+#fs-con {
+    top: 50%;
     left: 50%;
-}
-
-#main-logo-con {
-    border-radius: 100%;
-    height: 200px;
-    width: 200px;
+    transform: translate(-50%, -50%);
     position: absolute;
-    top: calc(50% - 100px);
-    left: calc(50% - 100px);
+    background: lightcoral;
+    height: 90vh;
+    width: 90vw;
+}
 
 
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    z-index: 11;
+#ms-con {
+    background: lightpink;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    height: 20vh;
+    width: 20vw;
     overflow: hidden;
 }
 
-.fs-title {
-    position: relative;
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    gap: 20vw;
-    align-items: center;
-    height: 100px;
-    width: 100vw;
-    z-index: 11;
-    overflow: hidden;
+button {
+    position: fixed;
+    top : 0;
+    left: 0;
+    height: 10vmin;
+    width: 10vmin;
 }
-
-.fs-title>h1 {
-    color: white;
-    transform: translateY(200%);
-}
-
-.fs-title>app-logo {
-    transform: translateY(200%);
-}
-
