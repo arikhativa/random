@@ -1,0 +1,11 @@
+docker compose up --build
+docker compose down
+docker volume prune
+
+docker exec -it random-primary-1 bash
+
+psql -U main_user -d primary_db
+
+SELECT * FROM pg_catalog.pg_user;
+
+docker exec -it random-primary-1 cat /var/lib/postgresql/data/pg_hba.conf > pg_hba.conf
