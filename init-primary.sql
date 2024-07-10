@@ -1,0 +1,2 @@
+CREATE USER primary_user WITH REPLICATION ENCRYPTED PASSWORD 'primary_password';
+CREATE USER primary_user2 WITH REPLICATION ENCRYPTED PASSWORD 'primary_password2';

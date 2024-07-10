@@ -2,13 +2,18 @@ version: '3.8'
 
 services:
   primary:
-    image: postgres:latest
+    build:
+      context: .
+      dockerfile: Dockerfile.primary
     environment:
-      POSTGRES_USER: primary_user
-      POSTGRES_PASSWORD: primary_password
+      POSTGRES_USER: main_user
+      POSTGRES_PASSWORD: main__password
       POSTGRES_DB: primary_db
     volumes:
-      - primary_data:/var/lib/postgresql/data
+      - ./data/p:/var/lib/postgresql/data
+      - ./init-primary.sql:/docker-entrypoint-initdb.d/init-primary.sql
+      - ./postgresql.conf:/var/lib/postgresql/data/postgresql.conf
+      
     networks:
       - postgres_net
 
@@ -27,7 +32,7 @@ services:
     depends_on:
       - primary
     volumes:
-      - replica_data:/var/lib/postgresql/data
+      - ./data/r:/var/lib/postgresql/data
     networks:
       - postgres_net
 
