@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  primary:
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: primary_user
+      POSTGRES_PASSWORD: primary_password
+      POSTGRES_DB: primary_db
+    volumes:
+      - primary_data:/var/lib/postgresql/data
+    networks:
+      - postgres_net
+
+  replica:
+    build:
+      context: .
+      dockerfile: Dockerfile.replica
+    environment:
+      POSTGRES_USER: replica_user
+      POSTGRES_PASSWORD: replica_password
+      POSTGRES_DB: replica_db
+      POSTGRES_PRIMARY_HOST: primary
+      POSTGRES_PRIMARY_PORT: 5432
+      POSTGRES_PRIMARY_USER: primary_user
+      POSTGRES_PRIMARY_PASSWORD: primary_password
+    depends_on:
+      - primary
+    volumes:
+      - replica_data:/var/lib/postgresql/data
+    networks:
+      - postgres_net
+
+volumes:
+  primary_data:
+  replica_data:
+
+networks:
+  postgres_net:
