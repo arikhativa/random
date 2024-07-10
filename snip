@@ -3,9 +3,28 @@ docker compose down
 docker volume prune
 
 docker exec -it random-primary-1 bash
+docker exec -it random-replica-1 bash
 
 psql -U main_user -d primary_db
 
 SELECT * FROM pg_catalog.pg_user;
 
+SELECT * FROM pg_stat_replication;
+
+
+
 docker exec -it random-primary-1 cat /var/lib/postgresql/data/pg_hba.conf > pg_hba.conf
+
+
+
+CREATE USER replicator WITH REPLICATION ENCRYPTED PASSWORD 'replica';
+
+
+echo "host replication replicator 0.0.0.0/0 md5" >> /var/lib/postgresql/data/pg_hba.conf
+pg_ctl reload
+
+
+pg_basebackup -h random-primary-1 -U replicator -D /tmp/rep -R --slot=rep_name
+pg_basebackup -h random-primary-1 -U replicator -D /tmp/rep -R 
+
+pg_basebackup -h random-primary-1 -D /var/lib/postgresql/data -U replicator -vP -W

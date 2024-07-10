@@ -9,11 +9,11 @@ services:
       POSTGRES_USER: main_user
       POSTGRES_PASSWORD: main__password
       POSTGRES_DB: primary_db
-    volumes:
+    # volumes:
       # - ./data/p:/var/lib/postgresql/data
-      - ./init-primary.sql:/docker-entrypoint-initdb.d/init-primary.sql
-      - ./postgresql.conf:/var/lib/postgresql/data/postgresql.conf
-      - ./pg_hba.conf:/var/lib/postgresql/data/pg_hba.conf
+      # - ./init-primary.sql:/docker-entrypoint-initdb.d/init-primary.sql
+      # - ./postgresql.conf:/var/lib/postgresql/data/postgresql.conf
+      # - ./pg_hba.conf:/var/lib/postgresql/data/pg_hba.conf
       
     networks:
       - postgres_net
