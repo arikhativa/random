@@ -28,3 +28,9 @@ pg_basebackup -h random-primary-1 -U replicator -D /tmp/rep -R --slot=rep_name
 pg_basebackup -h random-primary-1 -U replicator -D /tmp/rep -R 
 
 pg_basebackup -h random-primary-1 -D /var/lib/postgresql/data -U replicator -vP -W
+
+
+
+
+CREATE USER replicator WITH REPLICATION ENCRYPTED PASSWORD 'replicator_password';
+docker exec -it random-postgres_primary-1 psql -U user -d postgres -c 'select * from pg_replication_slots;'

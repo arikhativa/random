@@ -1,2 +1,2 @@
-CREATE USER primary_user WITH REPLICATION ENCRYPTED PASSWORD 'primary_password';
-CREATE USER primary_user2 WITH REPLICATION ENCRYPTED PASSWORD 'primary_password2';
+CREATE USER replicator WITH REPLICATION ENCRYPTED PASSWORD 'replicator_password';
+SELECT pg_create_physical_replication_slot('replication_slot');
