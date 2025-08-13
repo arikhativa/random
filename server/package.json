@@ -1,0 +1,7 @@
+{
+  "name": "server",
+  "packageManager": "yarn@4.9.2",
+  "dependencies": {
+    "@test/common": "1.0.0"
+  }
+}
