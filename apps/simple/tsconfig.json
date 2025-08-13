@@ -1,0 +1,18 @@
+{
+    "extends": "@test/tsconfig",
+    "compilerOptions": {
+        "paths": {
+            "@test/sum": [
+                "../../packages/sum/src"
+            ]
+        }
+    },
+    "ts-node": {
+        "require": [
+            "tsconfig-paths/register"
+        ]
+    },
+    "include": [
+        "**/*.ts"
+    ]
+}

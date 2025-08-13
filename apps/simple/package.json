@@ -1,0 +1,19 @@
+{
+    "name": "@test/sample-app",
+    "private": true,
+    "scripts": {
+        "start": "ts-node index.ts",
+        "typecheck": "tsc --noEmit --pretty"
+    },
+    "dependencies": {
+        "@test/sum": "workspace:^",
+        "@types/node": "*",
+        "ts-node": "^10",
+        "typescript": ">=2.7"
+    },
+    "devDependencies": {
+        "@test/tsconfig": "workspace:^",
+        "tsconfig-paths": "^4",
+        "typescript": "^4"
+    }
+}
