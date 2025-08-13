@@ -5,3 +5,4 @@ export const sampleFunction = () => {
     console.log(`One plus two equals ${sum(1, 2)}.`);
 
 };
+sampleFunction()
